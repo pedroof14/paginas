@@ -81,15 +81,45 @@
         let displayJogador = document.getElementById("jogador");
         let hackCounter = 0;
 
+        // devolve "X" ou "O" se houver vencedor, ou "" se não houver
+        function detetarVencedor() {
+            const linhas = [
+                [ec1, ec2, ec3],
+                [ec4, ec5, ec6],
+                [ec7, ec8, ec9],
+                [ec1, ec4, ec7],
+                [ec2, ec5, ec8],
+                [ec3, ec6, ec9],
+                [ec1, ec5, ec9],
+                [ec3, ec5, ec7]
+            ];
+
+            for (let linha of linhas) {
+                if (linha[0].innerText !== "" &&
+                        linha[0].innerText === linha[1].innerText && 
+                        linha[1].innerText === linha[2].innerText) {
+                    return linha[0].innerText;
+                }
+            }
+
+            return "";
+        }
+
         for (let casa of casas) {
             casa.addEventListener("click", function() {
                 console.log("Clicou na casa " + casa.id);
-                hackCounter--;
+                hackCounter -= 1;
                 if (casa.innerText !== "" && hackCounter<3) return;
                 hackCounter = 0;
                 casa.innerText = jogador;
                 jogador = jogador === "X" ? "O" : "X";
                 displayJogador.innerText = jogador;
+
+                let vencedor = detetarVencedor();
+                if (vencedor !== "") {
+                    displayJogador.innerText = vencedor + " venceu!";
+                }
+
             });
         }
 
