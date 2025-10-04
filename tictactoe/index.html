@@ -80,6 +80,7 @@
 
         let displayJogador = document.getElementById("jogador");
         let hackCounter = 0;
+        let jogoTerminado = false;
 
         // devolve "X" ou "O" se houver vencedor, ou "" se não houver
         function detetarVencedor() {
@@ -107,6 +108,7 @@
 
         for (let casa of casas) {
             casa.addEventListener("click", function() {
+                if (jogoTerminado) return;
                 console.log("Clicou na casa " + casa.id);
                 hackCounter -= 1;
                 if (casa.innerText !== "" && hackCounter<3) return;
@@ -118,6 +120,7 @@
                 let vencedor = detetarVencedor();
                 if (vencedor !== "") {
                     displayJogador.innerText = vencedor + " venceu!";
+                    jogoTerminado = true;
                 }
 
             });
