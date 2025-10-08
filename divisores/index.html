@@ -61,7 +61,16 @@
             let input_numero = document.getElementById("numero");
             let numero = input_numero.value;
             let resultados = document.getElementById("resultados");
-            resultados.innerText = numero;
+
+            let divisores = [];
+            let numero2 = (numero / 2) + 1;
+            console.log(numero2);
+            for (let i = 1; i < numero2; i++) {
+                if (numero % i == 0) divisores.push(i);
+            }
+
+            resultados.innerHTML = divisores;
+
         });
 
     </script>
