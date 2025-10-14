@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Próximo primo meu</title>
+    <meta name="author" content="Pedro Fartaria">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <div class="card-header">
+            <h1>
+                Próximo primo
+            </h1>
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-3">
+                <label for="numero" class="form-label">Número</label>
+                <input type="number" class="form-control" id="numero" placeholder="Escreve um número inteiro">
+            </div>
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3" id="btCalcular">Calcular</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div id="resultados">
+                        Aqui irá aparecer o próximo primo ok bro?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    
+    <script>
+
+        // Devolve true se for primo ou false caso contrário
+        function eh_primo(numero){
+            let numero2 = (numero / 2) + 1;
+
+            for (let i = 2; i < numero2; i++) {
+                if (numero % i == 0) return false;
+            }
+            return true;
+        }
+
+        //devolve o número primo a seguir ao número dado (:
+        function proximo_primo(numero){
+            while (true){
+                numero++;
+                if (eh_primo(numero)) return numero;
+            }
+        }
+
+        const btCalcular = document.getElementById("btCalcular");
+
+        btCalcular.addEventListener("click", function() {
+            let input_numero = document.getElementById("numero");
+            let numero = input_numero.value;
+            let resultados = document.getElementById("resultados");
+
+            let pp = proximo_primo(numero);
+            resultados.innerHTML = `O próximo número primo é: ${pp}`;
+
+        });
+
+    </script>
+</body>
+</html>
