@@ -95,12 +95,28 @@
                 if (quociente == 1) break;
             }
 
-            resultados.innerHTML = `
-                Os fatores primos são: ${fatores}
-                <br>
-                Os quocientes são: ${quocientes}
-            `;
+            //resultados.innerHTML = `
+            //    Os fatores primos são: ${fatores}
+            //    <br>
+            //    Os quocientes são: ${quocientes}
+            //`;
 
+            let texto = ``;
+            texto += `<div style="width: 1px;">
+                            <table class="table table-borderless">
+                                <tbody>`;
+
+            fatores.push('-');
+            for (let i = 0; i<quocientes.length; i++){
+                texto += `<tr><td class="border-end text-end">${quocientes[i]}</td><td></td><td>${fatores[i]}</td></tr>`;
+            }
+
+            texto += `         </tbody>
+                            </table>
+                        </div>
+                       `;
+
+            resultados.innerHTML = texto;
         });
 
     </script>
