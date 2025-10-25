@@ -14,6 +14,19 @@
         body {
             font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         }
+
+        td.bordagrossa {
+            border-right-color: black !important;
+        }
+
+        td.td1ac {
+            padding-right: 50px;
+            align-content: baseline;
+        }
+
+        td.td2ac {
+            align-content: baseline;
+        }
     </style>
 </head>
 <body>
@@ -116,13 +129,13 @@
             let fq2 = fatores_primos(numero2);
 
             let texto = ``;
-            texto += `<div style="width: 1px;">
+            texto += `<div style="width: 100px;">
                             <table class="table table-borderless">
                                 <tbody>`;
 
             fq1.fatores.push('-');
             for (let i = 0; i<fq1.quocientes.length; i++){
-                texto += `<tr><td class="border-end text-end">${fq1.quocientes[i]}</td><td></td><td>${fq1.fatores[i]}</td></tr>`;
+                texto += `<tr><td class="border-end text-end bordagrossa">${fq1.quocientes[i]}</td><td></td><td>${fq1.fatores[i]}</td></tr>`;
             }
 
             texto += `         </tbody>
@@ -130,19 +143,36 @@
                         </div>
                        `;
 
-            texto += `<div style="width: 1px;">
+            let tex_tab1 = texto;
+
+            texto = "";
+            texto += `<div style="width: 100px;">
                             <table class="table table-borderless">
                                 <tbody>`;
 
             fq2.fatores.push('-');
             for (let i = 0; i<fq2.quocientes.length; i++){
-                texto += `<tr><td class="border-end text-end">${fq2.quocientes[i]}</td><td></td><td>${fq2.fatores[i]}</td></tr>`;
+                texto += `<tr><td class="border-end text-end bordagrossa">${fq2.quocientes[i]}</td><td></td><td>${fq2.fatores[i]}</td></tr>`;
             }
 
             texto += `         </tbody>
                             </table>
                         </div>
                        `;
+
+            let tex_tab2 = texto;
+
+            texto = `
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="td1ac">${tex_tab1}</td>
+                            <td class="td2ac">${tex_tab2}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+
 
             resultados.innerHTML = texto;
         });
