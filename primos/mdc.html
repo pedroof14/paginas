@@ -213,6 +213,13 @@
                 </table>
             `;
 
+            texto_tmp = `${mdc.fatores}`;
+            texto_tmp = texto_tmp.replace(/,/g, "x");
+
+            texto += `
+                    <p>Os calculos para o mdc são: ${texto_tmp} = ${mdc.mdc}</p>
+                `;
+
 
             resultados.innerHTML = texto;
         });
