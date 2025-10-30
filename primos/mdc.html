@@ -114,6 +114,43 @@
             };
         }
 
+        //Recebe duas lista de fatores primos e devolve um objeto {fatores, mdc}
+        function mdcf(f1, f2){
+            let f1c = [...f1];
+            let f2c = [...f2];
+            let fmdc = [];
+
+            //troca f1c com f2c
+            if (f1c.length > f2c.length){
+                let tmp = f1c;
+                f1c = f2c;
+                f2c = tmp;
+            }
+
+            while (f1c.length > 0){
+                let fp = f1c[0];
+                let i1 = f1c.indexOf(fp);
+                let i2 = f2c.indexOf(fp);
+                if (f2c.includes(fp)){
+                    fmdc.push(fp);
+                    f1c.splice(i1, 1);
+                    f2c.splice(i2, 1);
+                }else{
+                    f1c.splice(i1, 1);
+                }
+            }
+
+            let produto = 1;
+            for (let f of fmdc){
+                produto *= f;
+            }
+
+            return{
+                fatores:fmdc,
+                mdc:produto
+            }
+        }
+
         const btCalcular = document.getElementById("btCalcular");
 
         btCalcular.addEventListener("click", function() {
@@ -127,6 +164,9 @@
 
             let fq1 = fatores_primos(numero1);
             let fq2 = fatores_primos(numero2);
+
+            let mdc = mdcf(fq1.fatores, fq2.fatores);
+            console.log(mdc);
 
             let texto = ``;
             texto += `<div style="width: 100px;">
