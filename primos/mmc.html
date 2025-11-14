@@ -156,6 +156,51 @@
             }
         }
 
+        function mmcp(numeros){
+            const unicos = [];
+
+            for (let i = 0; i < numeros.length; i++) {
+                const n = numeros[i];
+                let jaExiste = false;
+
+                // verificar se o número já está na lista unicos
+                for (let j = 0; j < unicos.length; j++) {
+                    if (unicos[j] === n) {
+                        jaExiste = true;
+                        break;
+                    }
+                }
+
+                if (!jaExiste) {
+                    unicos.push(n);
+                }
+            }
+
+            // 2. Lista de contagens
+            const contagens = [];
+            for (let i = 0; i < unicos.length; i++) {
+                const valor = unicos[i];
+                let conta = 0;
+
+                for (let j = 0; j < numeros.length; j++) {
+                    if (numeros[j] === valor) {
+                        conta++;
+                    }
+                }
+
+                contagens.push(conta);
+            }
+
+            // 3. Construir a string final
+            let resultado = "";
+            for (let i = 0; i < unicos.length; i++) {
+                if (resultado !== "") resultado += " x ";
+                resultado += unicos[i] + "^" + contagens[i];
+            }
+
+            return resultado;
+        }
+
         const btCalcular = document.getElementById("btCalcular");
 
         btCalcular.addEventListener("click", function() {
@@ -218,8 +263,7 @@
                 </table>
             `;
 
-            texto_tmp = `${mmc.fatores}`;
-            texto_tmp = texto_tmp.replace(/,/g, "x");
+            texto_tmp = mmc(mmc.fatores);
 
             texto += `
                     <p>Os calculos para o mmc são: ${texto_tmp} = ${mmc.mmc}</p>
