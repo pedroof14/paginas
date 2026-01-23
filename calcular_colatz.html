@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular Colatz</title>
+    <meta name="author" content="Pedro Fartaria">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-3.3.0.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div class="card">
+
+        <div class="card-header">
+            <h1>
+                Calcular Colatz
+            </h1>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="numero" class="form-label">Insira um número inteiro</label>
+                <input type="number" class="form-control" id="numero" placeholder="Escreva um número inteiro">
+            </div>
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3" id="btCalcular">Calcular</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div id="resultados">
+                        Aqui irão aparecer os resultados de Colatz
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div id ="graficos_colatz" style="width:800px;height:600px;">
+                        Aqui irão aparecer os gráficos de Colatz dos números menores que 500
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    
+    <script>
+        let botaoCalcular = document.getElementById("btCalcular");
+        let resultados = document.getElementById("resultados");
+        let graficos_colatz = document.getElementById("graficos_colatz");
+
+        function proximo_colatz(n){
+            if (n % 2 === 0){
+                return n / 2;
+            } else {
+                return 3 * n + 1;
+            }
+        }
+
+        let listadlistas = [];
+
+        botaoCalcular.addEventListener("click", function(){
+            inputNumero = parseInt(document.getElementById("numero").value);
+
+            let lista_colatz = [];
+            lista_colatz.push(inputNumero);
+
+            while (inputNumero != 1) {
+                inputNumero = proximo_colatz(inputNumero);
+                lista_colatz.push(inputNumero);
+            }
+
+            if (lista_colatz[0] < 500){
+                listadlistas.push(lista_colatz);
+                
+                // refazer o gráfico
+                let dados_grafico = [];
+                for (let i = 0; i < listadlistas.length; i++){
+                    let yvar = listadlistas[i];
+                    
+                    let xvar = [];
+                    for (let j=1; j <= yvar.length; j++){
+                        xvar.push(j);
+                    }
+
+                    dados_grafico.push(
+                        {
+                            x: xvar,
+                            y: yvar,
+                            type: 'scatter',
+                            name: 'Início: ' + yvar[0]
+                        }
+                    );
+
+                    Plotly.newPlot( graficos_colatz, 
+                        dados_grafico, 
+                        {
+                            margin: { t: 0 } 
+                        } 
+                    );
+                }
+            }
+
+            resultados.innerHTML = "A sequência de Colatz é: " + lista_colatz.join(", ");
+        });
+    </script>
+</body>
+</html>
