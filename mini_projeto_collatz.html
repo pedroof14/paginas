@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini-Projeto — Sequência de Collatz (JavaScript)</title>
+
+  <!-- Bootstrap (opcional, se já estiver no esqueleto do Pedro) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+
+  <style>
+    /* Impressão A4 portrait */
+    @page { size: A4 portrait; margin: 14mm; }
+
+    body {
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      color: #111;
+      background: #fff;
+      font-size: 12pt;
+      line-height: 1.35;
+    }
+
+    h1 { font-size: 18pt; margin: 0 0 6px 0; }
+    h2 { font-size: 14pt; margin: 14px 0 8px; }
+    h3 { font-size: 12.5pt; margin: 10px 0 6px; }
+
+    .lead { margin: 0 0 10px; }
+
+    .box {
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0 12px;
+    }
+
+    .small { font-size: 11pt; }
+    ul { margin: 6px 0 10px 20px; }
+    li { margin: 3px 0; }
+
+    .rule {
+      border-left: 4px solid #000;
+      padding: 6px 10px;
+      margin: 10px 0;
+      background: #f4f4f4;
+    }
+
+    .task {
+      border: 1px solid #999;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+
+    .task-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 11pt;
+      white-space: pre-wrap;
+      background: #fafafa;
+      border: 1px dashed #bbb;
+      border-radius: 6px;
+      padding: 8px;
+      margin: 8px 0 0;
+    }
+
+    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Ocultar elementos desnecessários na impressão */
+    .no-print { display: block; }
+    @media print {
+      .no-print { display: none !important; }
+      a { color: #111; text-decoration: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container px-0">
+    <header class="mb-2">
+      <h1>Mini-Projeto — Sequência de Collatz (JavaScript)</h1>
+      <p class="lead small">
+        Objetivo: praticar <strong>ciclos (<span class="mono" style="display:inline; padding:0; border:none; background:none;">for</span>, <span class="mono" style="display:inline; padding:0; border:none; background:none;">while</span>)</strong>
+        e <strong>listas (arrays)</strong>, organizando o código em funções.
+      </p>
+    </header>
+
+    <section class="box avoid-break">
+      <h2>Contexto</h2>
+      <p>
+        A <strong>sequência de Collatz</strong> começa num número inteiro positivo <span class="mono" style="display:inline; padding:0; border:none; background:none;">n</span> e evolui segundo as regras:
+      </p>
+      <ul>
+        <li>se <strong>n é par</strong> → <span class="mono" style="display:inline; padding:0; border:none; background:none;">n = n / 2</span></li>
+        <li>se <strong>n é ímpar</strong> → <span class="mono" style="display:inline; padding:0; border:none; background:none;">n = 3n + 1</span></li>
+      </ul>
+      <p>A sequência termina quando se atinge o valor <strong>1</strong>.</p>
+
+      <div class="mono">Exemplo:
+n = 6
+6 → 3 → 10 → 5 → 16 → 8 → 4 → 2 → 1</div>
+    </section>
+
+    <section class="avoid-break">
+      <h2>Parte A — Cálculo da sequência (nível base)</h2>
+
+      <div class="task">
+        <div class="task-title">Tarefa A1 — Validar o input</div>
+        <ul>
+          <li>Ler um número inteiro introduzido pelo utilizador.</li>
+          <li>Se o valor <strong>não</strong> for um inteiro positivo válido, mostrar uma mensagem de erro.</li>
+          <li>Caso contrário, continuar.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa A2 — Gerar a sequência</div>
+        <ul>
+          <li>Calcular a sequência completa de Collatz a partir do número introduzido.</li>
+          <li>Usar um ciclo <span class="mono" style="display:inline; padding:0; border:none; background:none;">while</span>.</li>
+          <li>Guardar todos os valores da sequência numa <strong>lista (array)</strong>.</li>
+          <li>A sequência deve incluir o valor inicial e terminar em <strong>1</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa A3 — Mostrar resultados</div>
+        <ul>
+          <li>Mostrar no ecrã a sequência completa.</li>
+          <li>Mostrar o número de passos necessários para chegar a 1.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="avoid-break">
+      <h2>Parte B — Análise da sequência (listas + ciclos)</h2>
+
+      <div class="task">
+        <div class="task-title">Tarefa B1 — Maior valor atingido</div>
+        <ul>
+          <li>A partir da lista da sequência calculada, determinar o <strong>maior valor</strong> atingido.</li>
+          <li>Mostrar esse valor ao utilizador.</li>
+        </ul>
+        <div class="rule">
+          <strong>Regra:</strong> não usar funções automáticas para encontrar o máximo.
+          Deve ser feito com um ciclo.
+        </div>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa B2 — Histórico (lista de listas)</div>
+        <ul>
+          <li>Guardar todas as sequências calculadas com início <strong>menor que 500</strong> numa lista global.</li>
+          <li>Cada sequência deve ser guardada como uma lista dentro de outra lista.</li>
+          <li>Não devem ser guardadas sequências repetidas (com o mesmo valor inicial).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="avoid-break">
+      <h2>Parte C — Representação gráfica (listas de listas)</h2>
+
+      <div class="task">
+        <div class="task-title">Tarefa C1 — Desenhar as sequências</div>
+        <ul>
+          <li>Desenhar um gráfico onde cada sequência guardada é representada por uma linha.</li>
+          <li>Eixo horizontal: número do passo.</li>
+          <li>Eixo vertical: valor da sequência.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa C2 — Atualizar o gráfico</div>
+        <ul>
+          <li>Sempre que uma nova sequência válida for calculada, o gráfico deve ser atualizado.</li>
+          <li>Todas as sequências anteriores devem continuar visíveis.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="avoid-break">
+      <h2>Parte D — Análise global (desafio)</h2>
+
+      <div class="task">
+        <div class="task-title">Tarefa D1 — Calcular comprimentos (2 a 500)</div>
+        <ul>
+          <li>Para todos os números de 2 a 500, calcular o <strong>comprimento</strong> da sequência de Collatz correspondente.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa D2 — Guardar resultados numa lista</div>
+        <p class="small mb-1">
+          Guardar os resultados numa lista de forma adequada, por exemplo:
+        </p>
+        <div class="mono">início → comprimento
+2 → 2
+3 → 8
+4 → 3
+...</div>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa D3 — Encontrar o maior</div>
+        <ul>
+          <li>Determinar qual o número entre 2 e 500 que gera a sequência <strong>mais longa</strong>.</li>
+          <li>Mostrar também o comprimento dessa sequência.</li>
+        </ul>
+      </div>
+
+      <div class="task">
+        <div class="task-title">Tarefa D4 — Gráfico de comprimentos</div>
+        <ul>
+          <li>Desenhar um gráfico onde:</li>
+          <li>Eixo horizontal: número inicial.</li>
+          <li>Eixo vertical: comprimento da sequência.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="box avoid-break">
+      <h2>Regras gerais</h2>
+      <ul>
+        <li>Usar apenas ciclos <span class="mono" style="display:inline; padding:0; border:none; background:none;">for</span> e <span class="mono" style="display:inline; padding:0; border:none; background:none;">while</span> e listas (arrays).</li>
+        <li>Evitar funções “automáticas” que façam o trabalho todo.</li>
+        <li>Organizar o código em funções pequenas e claras.</li>
+        <li>O programa não deve entrar em ciclos infinitos.</li>
+      </ul>
+    </section>
+
+    <section class="avoid-break">
+      <h2>Desafio extra (opcional)</h2>
+      <ul>
+        <li>Guardar resultados já calculados para acelerar o programa (memoização).</li>
+        <li>Calcular a média dos comprimentos das sequências entre 2 e 500.</li>
+        <li>Mostrar os 10 números que originam as sequências mais longas.</li>
+      </ul>
+    </section>
+
+    <div class="no-print mt-3 small text-muted">
+      Dica: para imprimir, usa o atalho <strong>Ctrl+P</strong> e escolhe “A4” e margens “Predefinidas”.
+    </div>
+  </div>
+</body>
+</html>
