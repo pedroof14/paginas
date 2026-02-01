@@ -1,0 +1,377 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular Colatz</title>
+    <meta name="author" content="Pedro Fartaria">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+    <style>
+        body {
+            font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-3.3.0.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div class="card">
+
+        <div class="card-header">
+            <h1>
+                Calcular Colatz
+            </h1>
+        </div>
+
+        <div class="card-body">            
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3" id="btCalcular">Calcular</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div id="resultados">
+                        Aqui irão aparecer os resultados de Colatz
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <div id ="graficos_colatz" style="width:800px;height:600px;">
+                        Aqui irão aparecer os gráficos de Colatz
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div id ="graficos_colatz_paths_angle_log" style="width:800px;height:600px;">
+                        Aqui irão aparecer os caminhos de Colatz
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    
+    <script>
+        let botaoCalcular = document.getElementById("btCalcular");
+        let resultados = document.getElementById("resultados");
+        let graficos_colatz = document.getElementById("graficos_colatz");
+        let graficos_colatz_paths_angle_log = document.getElementById("graficos_colatz_paths_angle_log");
+
+
+        function proximo_colatz(n){
+            if (n % 2 === 0){
+                return n / 2;
+            } else {
+                return 3 * n + 1;
+            }
+        }
+
+        function memoized_calcular_colatz(){
+
+            let cache = new Map();
+
+            function calcular_colatz_interno(n){
+
+                if (cache.has(n)){
+                    return cache.get(n);
+                }
+
+                let lista_colatz = [];
+                lista_colatz.push(n);
+
+                while (true) {
+                    n = proximo_colatz(n);
+                    if (cache.has(n)){
+                        lista_colatz = lista_colatz.concat( cache.get(n) );
+                        break;
+                    }
+                    lista_colatz.push(n);
+                    if (n === 1){
+                        break;
+                    }
+                }
+
+                return lista_colatz;
+            }
+
+            return calcular_colatz_interno;
+        }
+
+        function plotar_graficos(){
+            graficos_colatz.innerHTML = "";
+
+            let dados_grafico = [];
+            for (let i = 0; i < listadCollatzSeq.length; i++){
+                let yvar = listadCollatzSeq[i];
+                
+                let xvar = [];
+                for (let j=1; j <= yvar.length; j++){
+                    xvar.push(j);
+                }
+
+                let trace = {
+                    x: xvar,
+                    y: yvar,
+                    mode: 'lines+markers',
+                    type: 'scatter',
+                    name: 'Início: ' + yvar[yvar.length - 1]
+                };
+                dados_grafico.push(trace);
+            }
+
+            let layout = {
+                title: 'Sequências de Collatz para números menores que ' + listadCollatzSeq.length,
+                xaxis: { title: 'Passos' },
+                yaxis: { title: 'Valor' }
+            };
+
+            Plotly.newPlot(graficos_colatz, dados_grafico, layout);
+        }
+
+        function clamp01(x) {
+            return Math.max(0, Math.min(1, x));
+        }
+
+        // Paleta "magma" (aproximação) + interpolação linear entre stops
+        function magmaColor(t01) {
+            const stops = [
+                [0.0,  [0, 0, 4]],
+                [0.12, [31, 12, 72]],
+                [0.25, [85, 15, 109]],
+                [0.38, [136, 34, 106]],
+                [0.50, [186, 54, 85]],
+                [0.62, [227, 89, 51]],
+                [0.75, [249, 140, 10]],
+                [0.88, [252, 201, 72]],
+                [1.0,  [252, 253, 191]],
+            ];
+
+            t01 = clamp01(t01);
+
+            for (let i = 0; i < stops.length - 1; i++) {
+                const [t0, c0] = stops[i];
+                const [t1, c1] = stops[i + 1];
+                if (t01 >= t0 && t01 <= t1) {
+                    const u = (t01 - t0) / (t1 - t0);
+                    const r = Math.round(c0[0] + (c1[0] - c0[0]) * u);
+                    const g = Math.round(c0[1] + (c1[1] - c0[1]) * u);
+                    const b = Math.round(c0[2] + (c1[2] - c0[2]) * u);
+                    return `rgb(${r},${g},${b})`;
+                }
+            }
+            const last = stops[stops.length - 1][1];
+            return `rgb(${last[0]},${last[1]},${last[2]})`;
+        }
+
+        // Constrói contagens de arestas a partir de listadCollatzSeq (sequências 1 -> ... -> start)
+        function buildEdgeCountsFromSequences(seqs) {
+            // Map: "a->b" => count
+            const edgeCounts = new Map();
+
+            for (const seq of seqs) {
+                for (let i = 0; i < seq.length - 1; i++) {
+                    const a = seq[i];
+                    const b = seq[i + 1];
+                    const key = `${a}->${b}`;
+                    edgeCounts.set(key, (edgeCounts.get(key) || 0) + 1);
+                }
+            }
+
+            return edgeCounts;
+        }
+
+        function buildAdjacency(edgeCounts) {
+            // adjacency: parent => [{child, count}]
+            const adj = new Map();
+            let maxCount = 1;
+
+            for (const [key, count] of edgeCounts.entries()) {
+                const [aStr, bStr] = key.split("->");
+                const a = Number(aStr);
+                const b = Number(bStr);
+
+                if (!adj.has(a)) adj.set(a, []);
+                adj.get(a).push({ child: b, count });
+
+                if (count > maxCount) maxCount = count;
+            }
+
+            // opcional: ordenar filhos (só para consistência visual)
+            for (const [parent, children] of adj.entries()) {
+                children.sort((x, y) => x.child - y.child);
+                adj.set(parent, children);
+            }
+
+            return { adj, maxCount };
+        }
+
+        function plotar_caminhos_angle_log() {
+            graficos_colatz_paths_angle_log.innerHTML = "";
+
+            if (!listadCollatzSeq || listadCollatzSeq.length === 0) {
+                graficos_colatz_paths_angle_log.innerHTML = "Primeiro calcula as sequências.";
+                return;
+            }
+
+            const edgeCounts = buildEdgeCountsFromSequences(listadCollatzSeq);
+            const { adj, maxCount } = buildAdjacency(edgeCounts);
+
+            // posições calculadas por nó (para eventualmente anotações)
+            const nodePos = new Map(); // n => {x,y,col}
+            nodePos.set(1, { x: 0, y: 0, col: 0 });
+
+            const DEG_EVEN = 8.65 * Math.PI / 180;
+            const DEG_ODD  = 16.0 * Math.PI / 180;
+
+            const shapes = [];
+            let xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+
+            function updateBounds(x, y) {
+                xmin = Math.min(xmin, x);
+                xmax = Math.max(xmax, x);
+                ymin = Math.min(ymin, y);
+                ymax = Math.max(ymax, y);
+            }
+
+            function draw(start, pos_beg, angle) {
+                const children = adj.get(start);
+                if (!children || children.length === 0) return;
+
+                for (const link of children) {
+                    const child = link.child;
+
+                    // regra do ângulo depende da paridade do nó "mais longe da raiz" (child)
+                    const new_angle = (child % 2 === 0) ? (angle + DEG_EVEN) : (angle - DEG_ODD);
+
+                    // comprimento ~ 1/log(child)
+                    const denom = Math.log(child);
+                    if (!isFinite(denom) || denom <= 0) continue;
+
+                    const dx = Math.cos(new_angle) / denom;
+                    const dy = Math.sin(new_angle) / denom;
+
+                    const pos_end = { x: pos_beg.x + dx, y: pos_beg.y + dy };
+
+                    const col = Math.log1p(link.count) / Math.log1p(maxCount); // 0..1
+                    const width = 0.5 + 3.0 * col; // ajustável (o Python usa lw=2*col)
+                    const color = magmaColor(1 - col);
+
+                    shapes.push({
+                        type: "line",
+                        x0: pos_beg.x, y0: pos_beg.y,
+                        x1: pos_end.x, y1: pos_end.y,
+                        line: { color: color, width: width }
+                    });
+
+                    nodePos.set(child, { x: pos_end.x, y: pos_end.y, col: col });
+
+                    updateBounds(pos_beg.x, pos_beg.y);
+                    updateBounds(pos_end.x, pos_end.y);
+
+                    // recursão
+                    draw(child, pos_end, new_angle);
+                }
+            }
+
+            draw(1, { x: 0, y: 0 }, 0);
+
+            // margem para “respirar”
+            const mx = (xmax - xmin) * 0.08 + 0.5;
+            const my = (ymax - ymin) * 0.08 + 0.5;
+
+            const layout = {
+                title: `Collatz conjecture paths (N=${listadCollatzSeq.length})`,
+                width: 800,
+                height: 600,
+                margin: { l: 10, r: 10, t: 50, b: 10 },
+                paper_bgcolor: "white",
+                plot_bgcolor: "white",
+
+                xaxis: {
+                    visible: false,
+                    range: [xmin - mx, xmax + mx],
+                    fixedrange: true
+                },
+                yaxis: {
+                    visible: false,
+                    range: [ymin - my, ymax + my],
+                    fixedrange: true,
+                    scaleanchor: "x",
+                    scaleratio: 1
+                },
+
+                shapes: shapes,
+
+                annotations: [
+                    {
+                        xref: "paper", yref: "paper",
+                        x: 0.02, y: 0.02,
+                        showarrow: false,
+                        align: "left",
+                        font: { size: 10 },
+                        text:
+        `Regras:
+        • vira +8.65° para nós pares, e -16° para nós ímpares
+        • comprimento ~ 1/log(nó)
+        • cor/espessura ~ log1p(contagem da aresta)`
+                    }
+                ]
+            };
+
+            // Sem dados (as linhas estão em shapes)
+            Plotly.newPlot(graficos_colatz_paths_angle_log, [], layout, { displayModeBar: false });
+        }
+
+
+        let listadCollatzSeq = [];
+
+        botaoCalcular.addEventListener("click", function(){
+            console.log("Iniciando cálculos de Colatz...");
+            if (listadCollatzSeq.length > 0){
+                return;
+            }
+
+            let calcular_colatz = memoized_calcular_colatz();
+
+            let concluidos = 0;
+            let N = 1000;
+            for (let i=1; i <= N; i++){
+                resultados.innerHTML = "Calculando sequência de Colatz para " + i + "...<br>";
+
+                setTimeout(() => {
+                    let lista_colatz = calcular_colatz(i);
+                    lista_colatz.reverse();
+                    listadCollatzSeq.push(lista_colatz);
+                    resultados.innerHTML += "Número inicial: " + i + " -> #" + lista_colatz.length + "<br>";
+                    concluidos += 1;
+                    if (concluidos >= N){
+                        resultados.innerHTML += "<br> Cálculo concluído para todos os números até " + N + ".<br>";
+                    }
+                }, 0);
+                
+            }
+    
+            let intervel = setInterval( () => {
+                if (concluidos >= N){
+                    clearInterval(intervel);
+                    resultados.innerHTML += "Todas as sequências calculadas.<br>";
+                    plotar_graficos();
+                    plotar_caminhos_angle_log();
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+
